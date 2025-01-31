@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { AuthProvider } from './context/AuthContext';
 import theme from './theme/theme';
-import AppRoutes from './routes/AppRoutes';
+import App from './App';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
@@ -15,7 +15,7 @@ root.render(
     <ChakraProvider theme={theme}>
       <Router>
         <AuthProvider>
-          <AppRoutes />
+          <App />
           <Analytics />
         </AuthProvider>
       </Router>
