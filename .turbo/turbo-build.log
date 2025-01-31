@@ -8,8 +8,8 @@
 [32m[39m
 File sizes after gzip:
 
-  190.86 kB ([33m+860 B[39m)  [2mbuild/static/js/[22m[36mmain.13581b0b.js[39m
-  223 B               [2mbuild/static/js/[22m[36m198.27dd98f8.chunk.js[39m
+  190.9 kB ([33m+32 B[39m)  [2mbuild/static/js/[22m[36mmain.acbc962e.js[39m
+  223 B             [2mbuild/static/js/[22m[36m198.27dd98f8.chunk.js[39m
 
 The project was built assuming it is hosted at [32m/[39m.
 You can control this with the [32mhomepage[39m field in your [36mpackage.json[39m.

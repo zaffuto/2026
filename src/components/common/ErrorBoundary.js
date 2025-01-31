@@ -32,8 +32,10 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      const isDbError = this.state.errorMessage.toLowerCase().includes('database')
-      const errorTitle = isDbError ? 'Database Connection Error' : 'Application Error'
+      const errorMessage = this.state.errorMessage.toLowerCase()
+      const isDbError = errorMessage.includes('database')
+      const isConfigError = errorMessage.includes('configuration')
+      const errorTitle = isConfigError ? 'Configuration Error' : isDbError ? 'Database Connection Error' : 'Application Error'
       
       return (
         <Box p={8} maxW="500px" mx="auto" bg="red.100" borderRadius="lg" border="1px" borderColor="red.300">
