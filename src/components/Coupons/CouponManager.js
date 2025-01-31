@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../config/supabaseClient'
+import { validateCouponCode, validateDiscount, sanitizeInput } from '../../utils/validation'
 import {
   Box,
   Button,
@@ -84,10 +85,39 @@ const CouponManager = () => {
   }
 
   const handleAddCoupon = async () => {
+    const errors = {}
+    if (!validateCouponCode(newCoupon.code)) {
+      errors.code = 'Invalid coupon code format'
+    }
+    if (!validateDiscount(newCoupon.discount)) {
+      errors.discount = 'Invalid discount format'
+    }
+    if (!newCoupon.expiration_date) {
+      errors.expiration_date = 'Expiration date is required'
+    }
+    if (Object.keys(errors).length > 0) {
+      Object.keys(errors).forEach(key => {
+        toast({
+          title: 'Validation Error',
+          description: errors[key],
+          status: 'error',
+          duration: 3000,
+        })
+      })
+      return
+    }
+
     try {
+      const sanitizedCode = sanitizeInput(newCoupon.code)
+      const sanitizedDescription = sanitizeInput(newCoupon.description)
       const { error } = await supabase
         .from('coupons')
-        .insert([{ ...newCoupon, created_at: new Date() }])
+        .insert([{ 
+          ...newCoupon, 
+          code: sanitizedCode,
+          description: sanitizedDescription,
+          created_at: new Date() 
+        }])
 
       if (error) throw error
 

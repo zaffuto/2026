@@ -10,7 +10,7 @@ import {
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { hasError: false, errorMessage: '' }
+    this.state = { hasError: false, errorMessage: '', errorInfo: null }
   }
 
   static getDerivedStateFromError(error) {
@@ -21,20 +21,34 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error('Error:', error, errorInfo)
+    // Log error to an error reporting service
+    console.error('Error:', error)
+    console.error('Error Info:', errorInfo)
+    this.setState({ errorInfo })
+
+    // Here you could add error reporting service integration
+    // Example: Sentry.captureException(error)
   }
 
   render() {
     if (this.state.hasError) {
+      const isDbError = this.state.errorMessage.toLowerCase().includes('database')
+      const errorTitle = isDbError ? 'Database Connection Error' : 'Application Error'
+      
       return (
         <Box p={8} maxW="500px" mx="auto" bg="red.100" borderRadius="lg" border="1px" borderColor="red.300">
           <VStack spacing={4}>
-            <Heading color="red.600">{this.state.errorMessage.includes('Database') ? 'Database Connection Error' : 'Application Error'}</Heading>
+            <Heading color="red.600">{errorTitle}</Heading>
             <Text color="red.700">{this.state.errorMessage}</Text>
+            {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
+              <Text as="pre" fontSize="sm" p={4} bg="red.50" borderRadius="md" whiteSpace="pre-wrap">
+                {this.state.errorInfo.componentStack}
+              </Text>
+            )}
             <Button
               colorScheme="red"
               onClick={() => {
-                this.setState({ hasError: false })
+                this.setState({ hasError: false, errorInfo: null })
                 window.location.reload()
               }}
             >

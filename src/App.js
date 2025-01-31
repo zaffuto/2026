@@ -6,10 +6,14 @@ import Navbar from './components/Layout/Navbar'
 
 const App = () => {
   return (
-    <>
-      <Navbar />
-      <AppRoutes />
-    </>
+    <ChakraProvider>
+      <Router>
+        <AuthProvider>
+          <Navbar />
+          <AppRoutes />
+        </AuthProvider>
+      </Router>
+    </ChakraProvider>
   )
 }
 
