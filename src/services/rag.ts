@@ -2,7 +2,10 @@ import { Index } from '@upstash/vector';
 import { Message } from '../types';
 import { DeepSeekService } from './deepseek';
 
-const VECTOR_INDEX = new Index();
+const VECTOR_INDEX = new Index({
+  url: process.env.NEXT_PUBLIC_UPSTASH_VECTOR_REST_URL!,
+  token: process.env.NEXT_PUBLIC_UPSTASH_VECTOR_REST_TOKEN!,
+});
 
 export class RAGService extends DeepSeekService {
   constructor(apiKey: string) {
