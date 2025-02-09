@@ -57,11 +57,12 @@ export function ChatInterface() {
       }
       setMessages(prev => [...prev, botResponse])
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to get response from AI'
       toast({
         title: 'Error',
-        description: 'Failed to get response from AI',
+        description: errorMessage,
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       })
     } finally {

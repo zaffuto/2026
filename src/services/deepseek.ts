@@ -16,7 +16,7 @@ interface DeepSeekError {
   };
 }
 
-const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
+const DEEPSEEK_API_URL = 'https://api.deepseek.ai/v1/chat/completions';
 
 export class DeepSeekService {
   private apiKey: string;
@@ -29,6 +29,10 @@ export class DeepSeekService {
   async sendMessage(messages: Message[]): Promise<string> {
     if (!messages.length) {
       throw new Error('At least one message is required');
+    }
+
+    if (!this.apiKey || this.apiKey === 'your_deepseek_api_key_here') {
+      throw new Error('Invalid or missing DeepSeek API key. Please set a valid API key in your .env.local file.');
     }
 
     try {
@@ -48,19 +52,24 @@ export class DeepSeekService {
         })
       });
 
-      const data = await response.json() as DeepSeekResponse | DeepSeekError;
-
       if (!response.ok) {
-        const errorData = data as DeepSeekError;
-        throw new Error(`API request failed: ${errorData.error?.message || response.statusText}`);
+        const errorText = await response.text();
+        let errorMessage = `API request failed with status ${response.status}`;
+        try {
+          const errorData = JSON.parse(errorText) as DeepSeekError;
+          errorMessage = errorData.error?.message || errorMessage;
+        } catch (e) {
+          errorMessage += `: ${errorText}`;
+        }
+        throw new Error(errorMessage);
       }
 
-      const successData = data as DeepSeekResponse;
-      if (!successData.choices?.[0]?.message?.content) {
+      const data = await response.json() as DeepSeekResponse;
+      if (!data.choices?.[0]?.message?.content) {
         throw new Error('Invalid response format from DeepSeek API');
       }
 
-      return successData.choices[0].message.content;
+      return data.choices[0].message.content;
     } catch (error) {
       console.error('Error calling DeepSeek API:', error);
       throw error instanceof Error ? error : new Error('Unknown error occurred');
